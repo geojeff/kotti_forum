@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      metal:use-macro="api.macro('kotti:templates/view/master.pt')">
+
+  <article metal:fill-slot="content" class="forum-view content">
+    <p class="description">
+      ${context.description}
+    </p>
+    <div tal:content="structure context.body">
+      Marked <b>up</b> content goes here.
+    </div>
+    <div id="local-navigation">
+      <ul class="nav nav-pills">
+        <tal:repeat tal:repeat="item items">
+          <li tal:define="active item[1] == context and 'active' or ''"
+              class="${active}">
+            <a href="${api.url(item[1])}"
+               title="${getattr(item[1], 'title', None)}">
+               ${item[1].title+' (' + str(len(item[1].children)) + ')' + ' (' + api.format_date(item[0]) + ')'}
+            </a>
+          </li>
+        </tal:repeat>
+      </ul>
+    </div>
+  </article>
+
+</html>

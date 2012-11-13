@@ -1,0 +1,7 @@
+Authors
+=======
+
+Jeff Pittman [geojeff]
+
+kotti_forum started as a copy of kotti_forum, which is based on kotti_blog
+and kotti_media.

@@ -1,0 +1,5 @@
+CHANGES
+=======
+
+- Initial release.
+- Started with copy of kotti_forum.

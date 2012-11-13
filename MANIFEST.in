@@ -1,0 +1,6 @@
+recursive-include *.rst
+recursive-include *.txt
+recursive-include kotti_forum *
+recursive-exclude kotti_forum/tests *
+recursive-exclude kotti_forum .DS_Store
+recursive-exclude kotti_forum *.pyc

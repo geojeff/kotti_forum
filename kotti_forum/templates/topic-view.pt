@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xml:lang="en"
+      i18n:domain="kotti_forum"
+      xmlns:tal="http://xml.zope.org/namespaces/tal"
+      metal:use-macro="api.macro('kotti:templates/view/master.pt')">
+
+  <article metal:fill-slot="content" class="topic-view content">
+
+    <h1>${api.context.title}</h1>
+    <p class="description">
+      ${api.context.description}
+    </p>
+    <p class="body">
+      ${structure: api.context.body}
+    </p>
+    <table tal_condition="items" class="table table-condensed">
+      <thead>
+        <tr>
+          <th>Post Title</th>
+          <th>Poster</th>
+          <th>Creation Date</th>
+          <th>Modification Date</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr tal:repeat="item items" class="post">
+          <tal:block tal:define="url request.resource_url(item)">
+          <td>
+              <a href="${url}">
+                  ${item.title}
+              </a>
+          </td>
+          <td>
+              <a href="${url}">
+                  ${item.owner}
+              </a>
+          </td>
+          <td>
+              <a href="${url}">
+                  ${api.format_date(item.creation_date)}
+              </a>
+          </td>
+          <td>
+              <a href="${url}">
+                  ${api.format_date(item.modification_date)}
+              </a>
+          </td>
+          </tal:block>
+        </tr>
+      </tbody>
+    </table>
+
+   <tal:pagination tal:condition="settings['use_batching']"
+                   metal:use-macro="macros.macros['pagination']" />
+
+  </article>
+</html>
