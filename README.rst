@@ -2,20 +2,21 @@
 kotti_forum
 ===========
 
-This is an extension to the Kotti CMS that adds a discussion forum to a site.
+This is an extension to the Kotti CMS that adds a discussion forum to a site,
+or more than one forum.
 
 `Find out more about Kotti`_
 
 Setting up kotti_forum
 ======================
 
-This Addon adds two new Content Types to your Kotti site.
+This Addon adds three new Content Types to your Kotti site.
 To set up the content types add ``kotti_forum.kotti_configure``
 to the ``kotti.configurators`` setting in your ini file::
 
     kotti.configurators = kotti_forum.kotti_configure
 
-Now you can create a forum and add posts.
+Now you can create a forum and add topics and posts.
 
 There are different settings to adjust the behavior of the
 software.
@@ -59,7 +60,7 @@ Be warned: This addon is in alpha state. Use it at your own risk.
 Using kotti_forum
 ====================
 
-Add a forum to your site, then to that add posts.
+Add a forum to your site, then to that add topics, and to those, posts.
 
 Work in progress
 ================
@@ -100,5 +101,5 @@ the test requirements installed in your virtualenv).
 .. _GitHub repository: https://github.com/geojeff/kotti_forum
 .. _gitflow: https://github.com/nvie/gitflow
 .. _A successful Git branching model: http://nvie.com/posts/a-successful-git-branching-model/
-.. |build status| image:: https://secure.travis-ci.org/geojeff/kotti_forum.png?branch=master
-.. _build status: http://travis-ci.org/geojeff/kotti_forum
+x.x. |build status| image:: https://secure.travis-ci.org/geojeff/kotti_forum.png?branch=master
+x.x. _build status: http://travis-ci.org/geojeff/kotti_forum
