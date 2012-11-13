@@ -4,7 +4,7 @@ from fanstatic import (
     Group,
     )
 from pyramid.i18n import TranslationStringFactory
-from kotti.static import view_needed
+from kotti.fanstatic import view_needed
 from kotti.util import extract_from_settings
 from js.jquery_infinite_ajax_scroll import (
     jquery_infinite_ajax_scroll,
