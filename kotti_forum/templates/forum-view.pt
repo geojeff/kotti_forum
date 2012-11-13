@@ -26,31 +26,26 @@
       </thead>
       <tbody>
         <tr tal:repeat="item items" class="post">
-          <tal:block tal:define="url request.resource_url(item[1])">
+          <tal:block tal:define="url1 request.resource_url(item[1]);
+                                 url2 request.resource_url(item[2])">
           <td>
-              <a href="${url}">
+              <a href="${url2}">
                   ${item[2].title}
               </a>
           </td>
           <td>
-              <a href="${url}">
-                  ${str(len(item[2].children))}
-              </a>
+              ${str(len(item[2].children))}
           </td>
           <td>
-              <a href="${url}">
+              <a href="${url1}">
                   ${api.format_datetime(item[0])}, by: ${item[1].owner}
               </a>
           </td>
           <td>
-              <a href="${url}">
-                  ${item[2].owner}
-              </a>
+              ${item[2].owner}
           </td>
           <td>
-              <a href="${url}">
-                  ${api.format_date(item[2].creation_date)}
-              </a>
+              ${api.format_date(item[2].creation_date)}
           </td>
           </tal:block>
         </tr>
