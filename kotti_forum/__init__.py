@@ -43,7 +43,7 @@ def check_true(value):
 
 FORUM_DEFAULTS = {
     'use_batching': 'true',
-    'pagesize': '5',
+    'pagesize': '10',
     'use_auto_batching': 'true',
     'link_headline_overview': 'true',
     }
@@ -59,7 +59,7 @@ def forum_settings(name=''):
     try:
         settings['pagesize'] = int(settings['pagesize'])
     except ValueError:
-        settings['pagesize'] = 5
+        settings['pagesize'] = 10
     settings['use_auto_batching'] = check_true(settings['use_auto_batching'])
     settings['link_headline_overview'] = \
             check_true(settings['link_headline_overview'])
