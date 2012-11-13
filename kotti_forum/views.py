@@ -242,12 +242,14 @@ class ForumView(BaseView):
         modification_dates_and_items = []
         for item in items:
             if item.children:
+                sorted_posts = sorted(item.children, 
+                                      key=lambda x: x.modification_date,
+                                      reverse=True)
                 modification_dates_and_items.append(
-                    (min([post.modification_date for post in item.children]),
-                     item))
+                        (sorted_posts[0].modification_date, sorted_posts[0], item))
             else:
-                modification_dates_and_items.append((item.modification_date,
-                                                     item))
+                modification_dates_and_items.append(
+                        (item.modification_date, item, item))
 
         items = sorted(modification_dates_and_items)
 
