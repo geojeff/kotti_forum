@@ -1,3 +1,4 @@
+from sqlalchemy import Boolean
 from sqlalchemy import Column
 from sqlalchemy import ForeignKey
 from sqlalchemy import Integer
@@ -33,6 +34,7 @@ class Topic(Document):
     implements(IDocument, IDefaultWorkflow)
 
     id = Column('id', Integer, ForeignKey('documents.id'), primary_key=True)
+    votable = Column('votable', Boolean())
 
     type_info = Document.type_info.copy(
         name=u'Topic',
@@ -41,8 +43,9 @@ class Topic(Document):
         addable_to=[u'Forum'],
         )
 
-    def __init__(self, **kwargs):
+    def __init__(self, votable=True, **kwargs):
         super(Topic, self).__init__(**kwargs)
+        self.votable = votable
 
         self.default_view = 'folder-view'
 
@@ -61,3 +64,23 @@ class Post(Document):
 
     def __init__(self, **kwargs):
         super(Post, self).__init__(**kwargs)
+
+
+class Vote(Document):
+    implements(IDocument, IDefaultWorkflow)
+
+    id = Column(Integer, ForeignKey('documents.id'), primary_key=True)
+
+    vote = Column('vote', Integer())
+
+    type_info = Document.type_info.copy(
+        name=u'Vote',
+        title=_(u'Vote'),
+        add_view=u'add_vote',
+        addable_to=[u'Topic'],
+        )
+
+    def __init__(self, vote="0", **kwargs):
+        super(Vote, self).__init__(**kwargs)
+
+        self.vote = vote

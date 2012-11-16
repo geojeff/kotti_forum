@@ -33,6 +33,8 @@ def kotti_configure(settings):
             ' kotti_forum.resources.Topic'
     settings['kotti.available_types'] += \
             ' kotti_forum.resources.Post'
+    settings['kotti.available_types'] += \
+            ' kotti_forum.resources.Vote'
 
 
 def check_true(value):

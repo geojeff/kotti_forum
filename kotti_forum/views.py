@@ -22,6 +22,7 @@ from kotti_forum import forum_settings
 from kotti_forum.resources import Forum
 from kotti_forum.resources import Topic
 from kotti_forum.resources import Post
+from kotti_forum.resources import Vote
 from kotti_forum.static import kotti_forum_js
 from kotti_forum import _
 
@@ -44,11 +45,34 @@ class ForumSchema(DocumentSchema):
 
 
 class TopicSchema(DocumentSchema):
-    pass
+    votable = colander.SchemaNode(
+        colander.Boolean(),
+        description='Accepts Votes',
+        default=True,
+        missing=True,
+        widget=CheckboxWidget(),
+        title='Votable')
 
 
 class PostSchema(DocumentSchema):
     pass
+
+
+class VoteSchema(DocumentSchema):
+    choices = (('', '- Select -'),
+               (3, '+3'),
+               (2, '+2'),
+               (1, '+1'),
+               (0, '0'),
+               (-1, '-1'),
+               (-2, '-2'),
+               (-3, '-3'))
+    vote = colander.SchemaNode(
+        colander.String(),
+        default=_(u'0'),
+        missing=_(u'0'),
+        title=_(u'Vote'),
+        widget=SelectWidget(values=choices))
 
 
 class AddPostFormView(AddFormView):
@@ -88,6 +112,49 @@ class EditPostFormView(EditFormView):
 
         if appstruct['tags']:
             self.context.tags = appstruct['tags']
+
+
+class AddVoteFormView(AddFormView):
+    item_type = _(u"Vote")
+    item_class = Vote
+
+    def schema_factory(self):
+
+        return VoteSchema()
+
+    def add(self, **appstruct):
+
+        return self.item_class(
+            title=appstruct['title'],
+            description=appstruct['description'],
+            body=appstruct['body'],
+            tags=appstruct['tags'],
+            vote=appstruct['vote'],
+            )
+
+
+class EditVoteFormView(EditFormView):
+
+    def schema_factory(self):
+
+        return VoteSchema()
+
+    def edit(self, **appstruct):
+
+        if appstruct['title']:
+            self.context.title = appstruct['title']
+
+        if appstruct['description']:
+            self.context.description = appstruct['description']
+
+        if appstruct['body']:
+            self.context.body = appstruct['body']
+
+        if appstruct['tags']:
+            self.context.tags = appstruct['tags']
+
+        if appstruct['vote']:
+            self.context.vote = appstruct['vote']
 
 
 class AddForumFormView(AddFormView):
@@ -145,6 +212,7 @@ class AddTopicFormView(AddFormView):
             description=appstruct['description'],
             body=appstruct['body'],
             tags=appstruct['tags'],
+            votable=appstruct['votable'],
             default_view='folder-view',
             )
 
@@ -169,6 +237,9 @@ class EditTopicFormView(EditFormView):
         if appstruct['tags']:
             self.context.tags = appstruct['tags']
 
+        if appstruct['votable']:
+            self.context.votable = appstruct['votable']
+
 
 @view_defaults(permission='view')
 class BaseView(object):
@@ -192,6 +263,16 @@ class PostView(BaseView):
         return {}
 
 
+@view_defaults(context=Vote,
+               permission='view')
+class VoteView(BaseView):
+
+    @view_config(renderer='kotti_forum:templates/vote-view.pt')
+    def view(self):
+
+        return {}
+
+
 @view_defaults(context=Topic,
                permission='view')
 class TopicView(BaseView):
@@ -205,7 +286,43 @@ class TopicView(BaseView):
         query = session.query(Post).filter(
                 Post.parent_id == self.context.id)
 
-        items = query.all()
+        posts = query.all()
+
+        votes = None
+
+        vote_data = {}
+        vote_data['Sum'] = 0
+        vote_data['Count'] = 0
+        vote_data['Plus'] = 0
+        vote_data['Zero'] = 0
+        vote_data['Minus'] = 0
+
+        if self.context.votable:
+
+            query = session.query(Vote).filter(
+                    Vote.parent_id == self.context.id)
+
+            votes = query.all()
+
+            for vote in votes:
+
+                vote_data['Sum'] += vote.vote
+                vote_data['Count'] += 1
+
+                if vote.vote > 0:
+                    vote_data['Plus'] += 1
+                elif vote.vote == 0:
+                    vote_data['Zero'] += 1
+                else:
+                    vote_data['Minus'] += 1
+
+        if len(votes) > 0:
+            if len(posts) > 0:
+                items = posts + votes
+            else:
+                items = votes
+        else:
+            items = posts
 
         page = self.request.params.get('page', 1)
 
@@ -220,6 +337,7 @@ class TopicView(BaseView):
             'api': template_api(self.context, self.request),
             'macros': get_renderer('templates/macros.pt').implementation(),
             'items': items,
+            'vote_data': vote_data,
             'settings': settings,
             }
 
@@ -313,6 +431,21 @@ def includeme_edit(config):
     config.add_view(
         AddPostFormView,
         name=Post.type_info.add_view,
+        permission='add',
+        renderer='kotti:templates/edit/node.pt',
+        )
+
+    config.add_view(
+        EditVoteFormView,
+        context=Vote,
+        name='edit',
+        permission='edit',
+        renderer='kotti:templates/edit/node.pt',
+        )
+
+    config.add_view(
+        AddVoteFormView,
+        name=Vote.type_info.add_view,
         permission='add',
         renderer='kotti:templates/edit/node.pt',
         )

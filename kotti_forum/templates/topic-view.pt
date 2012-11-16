@@ -14,11 +14,24 @@
     <p class="body">
       ${structure: api.context.body}
     </p>
+    <div tal:condition="vote_data['Count'] or api.context.votable"
+         tal:define="keys ['Sum', 'Count', 'Plus', 'Zero', 'Minus']">
+      <ul class="nav nav-pills">
+        <tal:repeat tal:repeat="key keys">
+          <li class='active'>
+            <a href="/">${key}: ${vote_data[key]}</a>
+          </li>
+          <li>&nbsp;</li>
+          <li tal:condition="key == 'Count'">&nbsp;&nbsp;&nbsp;</li>
+        </tal:repeat>
+      </ul>
+    </div>
     <table tal_condition="items" class="table table-condensed">
       <thead>
         <tr>
-          <th>Post Title</th>
-          <th>Poster</th>
+          <th>Status</th>
+          <th>Title</th>
+          <th>Creator</th>
           <th>Creation Date</th>
           <th>Modification Date</th>
         </tr>
@@ -26,6 +39,20 @@
       <tbody>
         <tr tal:repeat="item items" class="post">
           <tal:block tal:define="url request.resource_url(item)">
+          <td>
+            <p tal:condition="exists: item.vote" tal:switch="item.vote">
+              <span tal:case="3"><i class="icon-plus-sign"></i>&nbsp;3</span>
+              <span tal:case="2"><i class="icon-plus-sign"></i>&nbsp;2</span>
+              <span tal:case="1"><i class="icon-plus-sign"></i>&nbsp;1</span>
+              <span tal:case="0"><i class="icon-adjust"></i>&nbsp;0</span>
+              <span tal:case="-1"><i class="icon-minus"></i>&nbsp;1</span>
+              <span tal:case="-2"><i class="icon-minus"></i>&nbsp;2</span>
+              <span tal:case="-3"><i class="icon-minus"></i>&nbsp;3</span>
+            </p>
+            <p tal:condition="python:not hasattr(item, 'vote')">
+              --
+            </p>
+          </td>
           <td>
               <a href="${url}">
                   ${item.title}

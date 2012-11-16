@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xml:lang="en"
+      xmlns:tal="http://xml.zope.org/namespaces/tal"
+      metal:use-macro="api.macro('kotti:templates/view/master.pt')">
+
+  <article metal:fill-slot="content" class="vote-view content posts">
+
+    <div class="vote" data-uri="${api.url(context)}">
+      <h1>${api.context.title}</h1>
+      <p class="description">
+        ${api.context.description}
+      </p>
+      <p class="body">
+        <p tal:switch="api.context.vote">
+          <span tal:case="3">
+            <i class="icon-plus-sign"></i>&nbsp;3
+          </span>
+          <span tal:case="2">
+            <i class="icon-plus-sign"></i>&nbsp;2
+          </span>
+          <span tal:case="1">
+            <i class="icon-plus-sign"></i>&nbsp;1
+          </span>
+          <span tal:case="0">
+            <i class="icon-adjust"></i>&nbsp;0
+          </span>
+          <span tal:case="-1">
+            <i class="icon-minus"></i>&nbsp;1
+          </span>
+          <span tal:case="-2">
+            <i class="icon-minus"></i>&nbsp;2
+          </span>
+          <span tal:case="-3">
+            <i class="icon-minus"></i>&nbsp;3
+          </span>
+        </p>
+        ${structure: api.context.body}
+      </p>
+    </div>
+
+  </article>
+
+</html>
