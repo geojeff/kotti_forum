@@ -316,7 +316,7 @@ class TopicView(BaseView):
                 else:
                     vote_data['Minus'] += 1
 
-        if len(votes) > 0:
+        if votes and len(votes) > 0:
             if len(posts) > 0:
                 items = posts + votes
             else:
