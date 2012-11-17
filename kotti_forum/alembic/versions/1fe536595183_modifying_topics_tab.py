@@ -15,7 +15,7 @@ import sqlalchemy as sa
 
 
 def upgrade():
-    op.add_column('topics', sa.Column('votable', sa.Boolean))
+    op.add_column('topics', sa.Column('votable', sa.Boolean()))
 
 
 def downgrade():
