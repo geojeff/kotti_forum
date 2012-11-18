@@ -343,9 +343,9 @@ class TopicView(BaseView):
             items = posts
 
         if self.context.sort_order_is_ascending:
-            items = sorted(items, key=lambda x: x.date)
+            items = sorted(items, key=lambda x: x.modification_date)
         else:
-            items = sorted(items, key=lambda x: x.date, reverse=True)
+            items = sorted(items, key=lambda x: x.modification_date, reverse=True)
 
         page = self.request.params.get('page', 1)
 
