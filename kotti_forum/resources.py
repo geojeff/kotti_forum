@@ -16,6 +16,7 @@ class Forum(Document):
     implements(IDocument, IDefaultWorkflow)
 
     id = Column('id', Integer, ForeignKey('documents.id'), primary_key=True)
+    sort_order_is_ascending = Column('sort_order_is_ascending', Boolean())
 
     type_info = Document.type_info.copy(
         name=u'Forum',
@@ -24,10 +25,12 @@ class Forum(Document):
         addable_to=[u'Document'],
         )
 
-    def __init__(self, **kwargs):
+    def __init__(self,
+                 sort_order_is_ascending=False,
+                 **kwargs):
         super(Forum, self).__init__(**kwargs)
 
-        self.default_view = 'folder-view'
+        self.sort_order_is_ascending = sort_order_is_ascending
 
 
 class Topic(Document):
@@ -74,7 +77,6 @@ class Vote(Document):
     implements(IDocument, IDefaultWorkflow)
 
     id = Column(Integer, ForeignKey('documents.id'), primary_key=True)
-
     vote = Column('vote', Integer())
 
     type_info = Document.type_info.copy(

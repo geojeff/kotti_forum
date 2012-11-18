@@ -41,7 +41,14 @@ log = logging.getLogger(__name__)
 
 
 class ForumSchema(DocumentSchema):
-    pass
+    choices = (
+        ('ascending', 'Ascending'),
+        ('descending', 'Descending'))
+    sort_order_choice = colander.SchemaNode(colander.String(),
+            title=_(u'Sort Order'),
+            default='descending',
+            widget=RadioChoiceWidget(values=choices),
+            validator=colander.OneOf(('ascending', 'descending')))
 
 
 class TopicSchema(DocumentSchema):
@@ -175,6 +182,10 @@ class AddForumFormView(AddFormView):
         return ForumSchema()
 
     def add(self, **appstruct):
+        sort_order_is_ascending = False
+
+        if appstruct['sort_order_choice'] == 'ascending':
+            sort_order_is_ascending = True
 
         return self.item_class(
             title=appstruct['title'],
@@ -182,6 +193,7 @@ class AddForumFormView(AddFormView):
             body=appstruct['body'],
             tags=appstruct['tags'],
             default_view='folder-view',
+            sort_order_is_ascending=sort_order_is_ascending,
             )
 
 
@@ -204,6 +216,11 @@ class EditForumFormView(EditFormView):
 
         if appstruct['tags']:
             self.context.tags = appstruct['tags']
+
+        if appstruct['sort_order_choice'] == 'ascending':
+            self.sort_order_is_ascending = True
+        else:
+            self.sort_order_is_ascending = False
 
 
 class AddTopicFormView(AddFormView):
@@ -392,7 +409,11 @@ class ForumView(BaseView):
                 modification_dates_and_items.append(
                         (item.modification_date, item, item))
 
-        items = sorted(modification_dates_and_items)
+
+        if self.context.sort_order_is_ascending:
+            items = sorted(modification_dates_and_items)
+        else:
+            items = sorted(modification_dates_and_items, reverse=True)
 
         page = self.request.params.get('page', 1)
 
