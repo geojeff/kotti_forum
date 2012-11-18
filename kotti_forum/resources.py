@@ -35,6 +35,7 @@ class Topic(Document):
 
     id = Column('id', Integer, ForeignKey('documents.id'), primary_key=True)
     votable = Column('votable', Boolean())
+    sort_order_is_ascending = Column('sort_order_is_ascending', Boolean())
 
     type_info = Document.type_info.copy(
         name=u'Topic',
@@ -43,11 +44,14 @@ class Topic(Document):
         addable_to=[u'Forum'],
         )
 
-    def __init__(self, votable=True, **kwargs):
+    def __init__(self,
+                 votable=True,
+                 sort_order_is_ascending=False,
+                 **kwargs):
         super(Topic, self).__init__(**kwargs)
         self.votable = votable
 
-        self.default_view = 'folder-view'
+        self.sort_order_is_ascending = sort_order_is_ascending
 
 
 class Post(Document):

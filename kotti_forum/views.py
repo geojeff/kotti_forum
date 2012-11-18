@@ -45,6 +45,15 @@ class ForumSchema(DocumentSchema):
 
 
 class TopicSchema(DocumentSchema):
+    choices = (
+        ('ascending', 'Ascending'),
+        ('descending', 'Descending'))
+    sort_order_choice = colander.SchemaNode(colander.String(),
+            title=_(u'Sort Order'),
+            default='descending',
+            widget=RadioChoiceWidget(values=choices),
+            validator=colander.OneOf(('ascending', 'descending')))
+
     votable = colander.SchemaNode(
         colander.Boolean(),
         description='Accepts Votes',
@@ -206,6 +215,10 @@ class AddTopicFormView(AddFormView):
         return TopicSchema()
 
     def add(self, **appstruct):
+        sort_order_is_ascending = False
+
+        if appstruct['sort_order_choice'] == 'ascending':
+            sort_order_is_ascending = True
 
         return self.item_class(
             title=appstruct['title'],
@@ -213,7 +226,7 @@ class AddTopicFormView(AddFormView):
             body=appstruct['body'],
             tags=appstruct['tags'],
             votable=appstruct['votable'],
-            default_view='folder-view',
+            sort_order_is_ascending=sort_order_is_ascending,
             )
 
 
@@ -239,6 +252,11 @@ class EditTopicFormView(EditFormView):
 
         if appstruct['votable']:
             self.context.votable = appstruct['votable']
+
+        if appstruct['sort_order_choice'] == 'ascending':
+            self.sort_order_is_ascending = True
+        else:
+            self.sort_order_is_ascending = False
 
 
 @view_defaults(permission='view')
@@ -323,6 +341,11 @@ class TopicView(BaseView):
                 items = votes
         else:
             items = posts
+
+        if self.context.sort_order_is_ascending:
+            items = sorted(items, key=lambda x: x.date)
+        else:
+            items = sorted(items, key=lambda x: x.date, reverse=True)
 
         page = self.request.params.get('page', 1)
 
