@@ -44,7 +44,7 @@ class Topic(Document):
         name=u'Topic',
         title=_(u'Topic'),
         add_view=u'add_topic',
-        addable_to=[u'Forum', u'Topic'],
+        addable_to=[u'Forum'],
         )
 
     def __init__(self,
