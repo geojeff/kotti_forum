@@ -64,8 +64,7 @@ class TopicSchema(DocumentSchema):
     votable = colander.SchemaNode(
         colander.Boolean(),
         description='Accepts Votes',
-        default=True,
-        missing=True,
+        default=False,
         widget=CheckboxWidget(),
         title='Votable')
 
@@ -76,13 +75,9 @@ class PostSchema(DocumentSchema):
 
 class VoteSchema(DocumentSchema):
     choices = (('', '- Select -'),
-               (3, '+3'),
-               (2, '+2'),
                (1, '+1'),
                (0, '0'),
-               (-1, '-1'),
-               (-2, '-2'),
-               (-3, '-3'))
+               (-1, '-1'))
     vote = colander.SchemaNode(
         colander.String(),
         default=_(u'0'),
@@ -218,9 +213,9 @@ class EditForumFormView(EditFormView):
             self.context.tags = appstruct['tags']
 
         if appstruct['sort_order_choice'] == 'ascending':
-            self.sort_order_is_ascending = True
+            self.context.sort_order_is_ascending = True
         else:
-            self.sort_order_is_ascending = False
+            self.context.sort_order_is_ascending = False
 
 
 class AddTopicFormView(AddFormView):

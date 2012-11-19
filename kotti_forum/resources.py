@@ -48,12 +48,11 @@ class Topic(Document):
         )
 
     def __init__(self,
-                 votable=True,
+                 votable=False,
                  sort_order_is_ascending=False,
                  **kwargs):
         super(Topic, self).__init__(**kwargs)
         self.votable = votable
-
         self.sort_order_is_ascending = sort_order_is_ascending
 
 
