@@ -318,6 +318,11 @@ class TopicView(BaseView):
 
         session = DBSession()
 
+        query = session.query(Topic).filter(
+                Topic.parent_id == self.context.id)
+
+        topics = query.all()
+
         query = session.query(Post).filter(
                 Post.parent_id == self.context.id)
 
@@ -358,6 +363,9 @@ class TopicView(BaseView):
                 items = votes
         else:
             items = posts
+
+        if topics and len(topics) > 0:
+            items = topics + items
 
         if self.context.sort_order_is_ascending:
             items = sorted(items, key=lambda x: x.modification_date)

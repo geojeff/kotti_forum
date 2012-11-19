@@ -14,7 +14,7 @@
     <p class="body">
       ${structure: api.context.body}
     </p>
-    <div tal:condition="vote_data['Count'] or api.context.votable"
+    <div tal:condition="vote_data['Count'] > 0 or api.context.votable"
          tal:define="keys ['Sum', 'Count', 'Plus', 'Zero', 'Minus']">
       <ul class="nav nav-pills">
         <tal:repeat tal:repeat="key keys">
