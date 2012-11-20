@@ -8,6 +8,11 @@ from zope.interface import implements
 from kotti.resources import IDocument
 from kotti.resources import IDefaultWorkflow
 from kotti.resources import Document
+from kotti.resources import TypeInfo
+
+from kotti.security import view_permitted
+
+from pprint import pformat
 
 from kotti_forum import _
 
@@ -73,18 +78,45 @@ class Post(Document):
         self.thread_parent_id = thread_parent_id 
 
 
+class VoteTypeInfo(TypeInfo):
+
+    def addable(self, context, request):
+        """Return True if
+            - the type described in 'self' may be added."""
+
+        if view_permitted(context, request, self.add_view):
+            addable = context.type_info.name in self.addable_to
+            vote_is_addable = True if context.votable else False
+            return addable and vote_is_addable
+        else:  # pragma: no cover (this already tested in Kotti itself)
+            return False
+
+    def copy(self, **kwargs):
+
+        d = self.__dict__.copy()
+        d.update(kwargs)
+        return VoteTypeInfo(**d)
+
+    def __repr__(self):  # pragma: no cover
+
+        return pformat(self.__dict__)
+
+
+vote_type_info = VoteTypeInfo(
+        name=u'Vote',
+        title=_(u'Vote'),
+        add_view=u'add_vote',
+        addable_to=[u'Topic'],
+        )
+
+
 class Vote(Document):
     implements(IDocument, IDefaultWorkflow)
 
     id = Column(Integer, ForeignKey('documents.id'), primary_key=True)
     vote = Column('vote', Integer())
 
-    type_info = Document.type_info.copy(
-        name=u'Vote',
-        title=_(u'Vote'),
-        add_view=u'add_vote',
-        addable_to=[u'Topic'],
-        )
+    type_info = vote_type_info.copy()
 
     def __init__(self, vote="0", **kwargs):
         super(Vote, self).__init__(**kwargs)

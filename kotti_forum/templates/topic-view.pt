@@ -51,7 +51,7 @@
                tal:repeat="child item[2]['tree']['children']"
                 class="${child.id == context.id and 'active' or ''}">
               <table tal_condition="items" class="table table-condensed">
-                <thead>
+                <thead tal:condition="item[0] > 3">
                   <tr>
                     <th>Title</th>
                     <th>Creator</th>
