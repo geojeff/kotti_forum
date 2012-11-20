@@ -65,11 +65,12 @@ class Post(Document):
         name=u'Post',
         title=_(u'Post'),
         add_view=u'add_post',
-        addable_to=[u'Topic'],
+        addable_to=[u'Topic', u'Post'],
         )
 
-    def __init__(self, **kwargs):
+    def __init__(self, thread_parent_id=None, **kwargs):
         super(Post, self).__init__(**kwargs)
+        self.thread_parent_id = thread_parent_id 
 
 
 class Vote(Document):

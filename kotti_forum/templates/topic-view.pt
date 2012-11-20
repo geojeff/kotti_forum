@@ -26,10 +26,10 @@
         </tal:repeat>
       </ul>
     </div>
-    <table tal_condition="items" class="table table-condensed">
+   <table tal_condition="items" class="table table-condensed">
       <thead>
         <tr>
-          <th>Status</th>
+          <th></th>
           <th>Title</th>
           <th>Creator</th>
           <th>Creation Date</th>
@@ -38,39 +38,35 @@
       </thead>
       <tbody>
         <tr tal:repeat="item items" class="post">
-          <tal:block tal:define="url request.resource_url(item)">
+          <tal:block tal:define="url request.resource_url(item[1])">
           <td>
-            <p tal:condition="exists: item.vote" tal:switch="item.vote">
-              <span tal:case="3"><i class="icon-plus-sign"></i>&nbsp;3</span>
-              <span tal:case="2"><i class="icon-plus-sign"></i>&nbsp;2</span>
+            <p tal:condition="exists: item[1].vote" tal:switch="item[1].vote">
               <span tal:case="1"><i class="icon-plus-sign"></i>&nbsp;1</span>
               <span tal:case="0"><i class="icon-adjust"></i>&nbsp;0</span>
               <span tal:case="-1"><i class="icon-minus"></i>&nbsp;1</span>
-              <span tal:case="-2"><i class="icon-minus"></i>&nbsp;2</span>
-              <span tal:case="-3"><i class="icon-minus"></i>&nbsp;3</span>
             </p>
-            <p tal:condition="python:not hasattr(item, 'vote')">
-              --
+            <p tal:condition="python:not hasattr(item[1], 'vote')">
+              ${item[0]}
             </p>
           </td>
           <td>
               <a href="${url}">
-                  ${item.title}
+                  ${item[1].title}
               </a>
           </td>
           <td>
               <a href="${url}">
-                  ${item.owner}
+                  ${item[1].owner}
               </a>
           </td>
           <td>
               <a href="${url}">
-                  ${api.format_date(item.creation_date)}
+                  ${api.format_date(item[1].creation_date)}
               </a>
           </td>
           <td>
               <a href="${url}">
-                  ${api.format_date(item.modification_date)}
+                  ${api.format_date(item[1].modification_date)}
               </a>
           </td>
           </tal:block>

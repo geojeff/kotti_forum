@@ -28,6 +28,7 @@ from kotti_forum import _
 
 from kotti.security import has_permission
 from kotti.views.util import template_api
+from kotti.views.util import nodes_tree
 
 from kotti import DBSession
 
@@ -289,8 +290,12 @@ class PostView(BaseView):
 
     @view_config(renderer='kotti_forum:templates/post-view.pt')
     def view(self):
-
-        return {}
+        tree = nodes_tree(self.request, self.context)
+        return {
+            'tree': {
+                'children': [tree],
+                },
+            }
 
 
 @view_defaults(context=Vote,
@@ -313,10 +318,49 @@ class TopicView(BaseView):
 
         session = DBSession()
 
-        query = session.query(Post).filter(
-                Post.parent_id == self.context.id)
+        # Posts, if we have them.
 
-        posts = query.all()
+        order_by = Post.modification_date
+        if self.context.sort_order_is_ascending:
+            order_by = Post.modification_date.desc()
+        query = (session.query(Post)
+                 .filter(Post.parent_id == self.context.id)
+                 .order_by(order_by)
+                )
+
+        top_level_posts = query.all()
+
+        thread_paths_and_posts = []
+
+        # From answer here: (http://stackoverflow.com/questions/9984513/
+        #                    python-recursion-through-objects-and-child-
+        #                    objects-print-child-depth-numbers)
+        def recurse(post, starting_index):
+            posts = not isinstance(post, (list, tuple)) and [post] or post
+            depth = [starting_index]
+
+            def wrapped(post):
+                thread_path = '.'.join([str(i) for i in depth])
+                thread_paths_and_posts.append((thread_path, post))
+
+                depth.append(1)
+                for child in post.children:
+                    wrapped(child)
+                    depth[-1] += 1
+                depth.pop()
+
+            for post in posts:
+                wrapped(post)
+                depth[0] += 1
+
+        [recurse(tlp, i+1) for i, tlp in enumerate(top_level_posts)]
+
+        if self.context.sort_order_is_ascending:
+            thread_paths_and_posts = sorted(thread_paths_and_posts)
+        else:
+            thread_paths_and_posts = sorted(thread_paths_and_posts, reverse=True)
+
+        # Votes, if we have them.
 
         votes = None
 
@@ -334,6 +378,8 @@ class TopicView(BaseView):
 
             votes = query.all()
 
+            votes_and_vote_objs = []
+
             for vote in votes:
 
                 vote_data['Sum'] += vote.vote
@@ -346,18 +392,20 @@ class TopicView(BaseView):
                 else:
                     vote_data['Minus'] += 1
 
+                votes_and_vote_objs.append((vote.vote, vote))
+
+            if self.context.sort_order_is_ascending:
+                votes_and_vote_objs = sorted(votes_and_vote_objs, reverse=True)
+            else:
+                votes_and_vote_objs = sorted(votes_and_vote_objs)
+
         if votes and len(votes) > 0:
             if len(posts) > 0:
-                items = posts + votes
+                items = votes_and_vote_objs + thread_paths_and_posts
             else:
-                items = votes
+                items = votes_and_vote_objs
         else:
-            items = posts
-
-        if self.context.sort_order_is_ascending:
-            items = sorted(items, key=lambda x: x.modification_date)
-        else:
-            items = sorted(items, key=lambda x: x.modification_date, reverse=True)
+            items = thread_paths_and_posts
 
         page = self.request.params.get('page', 1)
 
