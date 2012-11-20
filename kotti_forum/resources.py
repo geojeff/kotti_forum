@@ -86,8 +86,10 @@ class VoteTypeInfo(TypeInfo):
 
         if view_permitted(context, request, self.add_view):
             addable = context.type_info.name in self.addable_to
-            vote_is_addable = True if context.votable else False
-            return addable and vote_is_addable
+            if context.type_info.name == 'Topic':
+                vote_is_addable = True if context.votable else False
+                return addable and vote_is_addable
+            return False
         else:  # pragma: no cover (this already tested in Kotti itself)
             return False
 
