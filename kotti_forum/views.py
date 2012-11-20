@@ -333,35 +333,22 @@ class TopicView(BaseView):
 
         top_level_posts = query.all()
 
-        thread_paths_and_posts = []
+        post_counts_and_trees = []
 
-        # From answer here: (http://stackoverflow.com/questions/9984513/
-        #                    python-recursion-through-objects-and-child-
-        #                    objects-print-child-depth-numbers)
-        def recurse(post, starting_index):
-            posts = not isinstance(post, (list, tuple)) and [post] or post
-            depth = [starting_index]
+        for post in top_level_posts:
+            if post.children:
+                tree = nodes_tree(self.request, post)
+                post_count = len(tree.tolist())
+            else:
+                tree = (post)
+                post_count = 1
+            post_tree = {
+                'tree': {
+                    'children': [tree],
+                    },
+                }
 
-            def wrapped(post):
-                thread_path = '.'.join([str(i) for i in depth])
-                thread_paths_and_posts.append((thread_path, post))
-
-                depth.append(1)
-                for child in post.children:
-                    wrapped(child)
-                    depth[-1] += 1
-                depth.pop()
-
-            for post in posts:
-                wrapped(post)
-                depth[0] += 1
-
-        [recurse(tlp, i+1) for i, tlp in enumerate(top_level_posts)]
-
-        if self.context.sort_order_is_ascending:
-            thread_paths_and_posts = sorted(thread_paths_and_posts)
-        else:
-            thread_paths_and_posts = sorted(thread_paths_and_posts, reverse=True)
+            post_counts_and_trees.append((post_count, post, post_tree))
 
         # Votes, if we have them.
 
@@ -374,14 +361,14 @@ class TopicView(BaseView):
         vote_data['Zero'] = 0
         vote_data['Minus'] = 0
 
+        votes_and_vote_objs = []
+
         if self.context.votable:
 
             query = session.query(Vote).filter(
                     Vote.parent_id == self.context.id)
 
             votes = query.all()
-
-            votes_and_vote_objs = []
 
             for vote in votes:
 
@@ -395,29 +382,33 @@ class TopicView(BaseView):
                 else:
                     vote_data['Minus'] += 1
 
-                votes_and_vote_objs.append((vote.vote, vote))
+                votes_and_vote_objs.append((vote.vote, vote, 'vote'))
 
-            if self.context.sort_order_is_ascending:
-                votes_and_vote_objs = sorted(votes_and_vote_objs, reverse=True)
-            else:
-                votes_and_vote_objs = sorted(votes_and_vote_objs)
+            if votes_and_vote_objs:
+                if self.context.sort_order_is_ascending:
+                    votes_and_vote_objs = sorted(votes_and_vote_objs, reverse=True)
+                else:
+                    votes_and_vote_objs = sorted(votes_and_vote_objs)
 
-        if votes and len(votes) > 0:
-            if len(posts) > 0:
-                items = votes_and_vote_objs + thread_paths_and_posts
+        if votes_and_vote_objs:
+            if len(post_counts_and_trees) > 0:
+                items = votes_and_vote_objs + post_counts_and_trees
             else:
                 items = votes_and_vote_objs
+        elif post_counts_and_trees:
+            items = post_counts_and_trees
         else:
-            items = thread_paths_and_posts
+            items = None
 
         page = self.request.params.get('page', 1)
 
         settings = forum_settings()
 
-        if settings['use_batching']:
-            items = Batch.fromPagenumber(items,
-                          pagesize=settings['pagesize'],
-                          pagenumber=int(page))
+        if len(items) > 0:
+            if settings['use_batching']:
+                items = Batch.fromPagenumber(items,
+                              pagesize=settings['pagesize'],
+                              pagenumber=int(page))
 
         return {
             'api': template_api(self.context, self.request),

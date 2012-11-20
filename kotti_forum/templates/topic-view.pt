@@ -26,21 +26,18 @@
         </tal:repeat>
       </ul>
     </div>
-   <table tal_condition="items" class="table table-condensed">
+    <table tal_condition="items" class="table table-condensed">
       <thead>
         <tr>
           <th></th>
-          <th>Title</th>
-          <th>Creator</th>
-          <th>Creation Date</th>
-          <th>Modification Date</th>
+          <th>Threads</th>
         </tr>
       </thead>
       <tbody>
         <tr tal:repeat="item items" class="post">
           <tal:block tal:define="url request.resource_url(item[1])">
           <td>
-            <p tal:condition="exists: item[1].vote" tal:switch="item[1].vote">
+            <p tal:condition="python:hasattr(item[1], 'vote')" tal:switch="item[1].vote">
               <span tal:case="1"><i class="icon-plus-sign"></i>&nbsp;1</span>
               <span tal:case="0"><i class="icon-adjust"></i>&nbsp;0</span>
               <span tal:case="-1"><i class="icon-minus"></i>&nbsp;1</span>
@@ -50,24 +47,55 @@
             </p>
           </td>
           <td>
-              <a href="${url}">
-                  ${item[1].title}
-              </a>
-          </td>
-          <td>
-              <a href="${url}">
-                  ${item[1].owner}
-              </a>
-          </td>
-          <td>
-              <a href="${url}">
-                  ${api.format_date(item[1].creation_date)}
-              </a>
-          </td>
-          <td>
-              <a href="${url}">
-                  ${api.format_date(item[1].modification_date)}
-              </a>
+            <p tal:condition="item[2] != 'vote'"
+               tal:repeat="child item[2]['tree']['children']"
+                class="${child.id == context.id and 'active' or ''}">
+              <table tal_condition="items" class="table table-condensed">
+                <thead>
+                  <tr>
+                    <th>Title</th>
+                    <th>Creator</th>
+                    <th>Creation Date</th>
+                    <th>Modification Date</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>
+                      <a href="${api.url(child)}"
+                         title="${getattr(child, 'description', None)}">
+                        ${child.title}
+                      </a>
+                      <a tal:condition="api.find_edit_view(child)"
+                         href="${api.url(child, '@@edit')}"
+                         title="Edit" i18n:attributes="title"><i class="icon-edit"></i></a>
+                    </td>
+                    <td>
+                      <a href="${url}">
+                        ${child.owner}
+                      </a>
+                    </td>
+                    <td>
+                      <a href="${url}">
+                        ${api.format_date(child.creation_date)}
+                      </a>
+                    </td>
+                    <td>
+                      <a href="${url}">
+                        ${api.format_date(child.modification_date)}
+                      </a>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td colspan=4>
+                      <ul tal:replace="api.render_template(
+                                           'kotti:templates/edit/nav-tree.pt',
+                                           tree=child)" />
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </p>
           </td>
           </tal:block>
         </tr>
