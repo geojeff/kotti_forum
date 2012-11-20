@@ -290,12 +290,15 @@ class PostView(BaseView):
 
     @view_config(renderer='kotti_forum:templates/post-view.pt')
     def view(self):
-        tree = nodes_tree(self.request, self.context)
-        return {
-            'tree': {
-                'children': [tree],
-                },
-            }
+        if self.context.children:
+            tree = nodes_tree(self.request, self.context)
+            return {
+                'tree': {
+                    'children': [tree],
+                    },
+                }
+        else:
+            return {}
 
 
 @view_defaults(context=Vote,

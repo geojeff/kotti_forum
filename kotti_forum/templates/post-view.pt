@@ -14,7 +14,7 @@
       <p class="body">
         ${structure: api.context.body}
       </p>
-      <li tal:repeat="child tree.children"
+      <li tal:condition="exists:tree" tal:repeat="child tree.children"
           class="${child.id == context.id and 'active' or ''}">
         <a href="${api.url(child)}"
            title="${getattr(child, 'description', None)}">
