@@ -82,7 +82,7 @@
                     </td>
                     <td>
                       <a href="${url}">
-                        ${api.format_date(child.modification_date)}
+                        ${api.format_datetime(child.modification_date)}
                       </a>
                     </td>
                   </tr>

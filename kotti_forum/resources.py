@@ -10,6 +10,8 @@ from kotti.resources import IDefaultWorkflow
 from kotti.resources import Document
 from kotti.resources import TypeInfo
 
+from kotti.util import ViewLink
+
 from kotti.security import view_permitted
 
 from pprint import pformat
@@ -109,6 +111,7 @@ vote_type_info = VoteTypeInfo(
         title=_(u'Vote'),
         add_view=u'add_vote',
         addable_to=[u'Topic'],
+        edit_links=[ViewLink('edit', title=_(u'Edit')), ],
         )
 
 
