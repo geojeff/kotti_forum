@@ -390,31 +390,21 @@ class TopicView(BaseView):
                 else:
                     votes_and_vote_objs = sorted(votes_and_vote_objs)
 
-        if votes_and_vote_objs:
-            if len(post_counts_and_trees) > 0:
-                items = votes_and_vote_objs + post_counts_and_trees
-            else:
-                items = votes_and_vote_objs
-        elif post_counts_and_trees:
-            items = post_counts_and_trees
-        else:
-            items = None
-
         page = self.request.params.get('page', 1)
 
         settings = forum_settings()
 
-        if len(items) > 0:
-            if settings['use_batching']:
-                items = Batch.fromPagenumber(items,
-                              pagesize=settings['pagesize'],
-                              pagenumber=int(page))
+        if settings['use_batching']:
+            post_items = Batch.fromPagenumber(post_counts_and_trees,
+                          pagesize=settings['pagesize'],
+                          pagenumber=int(page))
 
         return {
             'api': template_api(self.context, self.request),
             'macros': get_renderer('templates/macros.pt').implementation(),
-            'items': items,
+            'vote_items': votes_and_vote_objs,
             'vote_data': vote_data,
+            'items': post_items,
             'settings': settings,
             }
 
