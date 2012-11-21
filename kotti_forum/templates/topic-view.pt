@@ -26,11 +26,11 @@
         </tal:repeat>
       </ul>
     </div>
-    <table tal_condition="vote_items" class="table table-condensed">
+    <table tal:condition="len(vote_items) > 0" class="table table-condensed">
       <thead>
         <tr>
           <th></th>
-          <th>Title</th>
+          <th>Vote Title</th>
           <th>Creator</th>
           <th>Creation Date</th>
           <th>Modification Date</th>
@@ -76,13 +76,13 @@
         </tr>
       </tbody>
     </table>
-    <div tal_condition="items" tal:repeat="item items">
-      <table tal_condition="items" class="table table-condensed"
+    <div tal:condition="items" tal:repeat="item items">
+      <table tal:condition="items" class="table table-condensed"
              tal:repeat="child item[2]['tree']['children']"
              class="${child.id == context.id and 'active' or ''}">
       <thead tal:condition="item == items[0]">
         <tr>
-          <th>Title</th>
+          <th>Post Title</th>
           <th>Creator</th>
           <th>Creation Date</th>
           <th>Modification Date</th>
@@ -91,7 +91,7 @@
       <tbody>
         <tr>
           <tal:block tal:define="url request.resource_url(child)">
-          <td>
+          <td width="40%">
             <a href="${api.url(child)}"
                title="${getattr(child, 'description', None)}">
               ${child.title}
@@ -100,17 +100,17 @@
                href="${api.url(child, '@@edit')}"
                title="Edit" i18n:attributes="title"><i class="icon-edit"></i></a>
           </td>
-          <td>
+          <td width="20%">
             <a href="${url}">
               ${child.owner}
             </a>
           </td>
-          <td>
+          <td width="20%">
             <a href="${url}">
               ${api.format_date(child.creation_date)}
             </a>
           </td>
-          <td>
+          <td width="20%">
             <a href="${url}">
               ${api.format_datetime(child.modification_date)}
             </a>
