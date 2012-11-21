@@ -386,9 +386,9 @@ class TopicView(BaseView):
 
             if votes_and_vote_objs:
                 if self.context.sort_order_is_ascending:
-                    votes_and_vote_objs = sorted(votes_and_vote_objs, reverse=True)
-                else:
                     votes_and_vote_objs = sorted(votes_and_vote_objs)
+                else:
+                    votes_and_vote_objs = sorted(votes_and_vote_objs, reverse=True)
 
         page = self.request.params.get('page', 1)
 
