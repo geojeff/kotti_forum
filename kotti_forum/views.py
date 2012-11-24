@@ -324,7 +324,7 @@ class TopicView(BaseView):
         # Posts, if we have them.
 
         order_by = Post.modification_date
-        if self.context.sort_order_is_ascending:
+        if not self.context.sort_order_is_ascending:
             order_by = Post.modification_date.desc()
         query = (session.query(Post)
                  .filter(Post.parent_id == self.context.id)
