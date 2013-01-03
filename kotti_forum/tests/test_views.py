@@ -51,7 +51,7 @@ class ViewsTests(UnitTestBase):
                  and (view['settings']['use_batching'] is True)
         assert ('settings' in view) \
                 and ('pagesize' in view['settings']) \
-                and (view['settings']['pagesize'] == 5)
+                and (view['settings']['pagesize'] == 10)
         assert ('settings' in view) \
                 and ('use_auto_batching' in view['settings']) \
                 and (view['settings']['use_auto_batching'] is True)
@@ -75,7 +75,7 @@ class ViewsTests(UnitTestBase):
                  and (view['settings']['use_batching'] is True)
         assert ('settings' in view) \
                 and ('pagesize' in view['settings']) \
-                and (view['settings']['pagesize'] == 5)
+                and (view['settings']['pagesize'] == 10)
         assert ('settings' in view) \
                 and ('use_auto_batching' in view['settings']) \
                 and (view['settings']['use_auto_batching'] is True)

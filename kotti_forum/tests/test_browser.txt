@@ -6,7 +6,7 @@ Setup and Login
 
   >>> import datetime
   >>> from dateutil.tz import tzutc
-  >>> from kotti import tests
+  >>> from kotti import testing
   >>> first_time_string = "2012-07-31 05:00:00"
   >>> first_date = datetime.datetime(2012, 7, 31, 5, 0, 0, tzinfo=tzutc())
   >>> second_time_string = "2012-07-31 06:00:00"
@@ -18,12 +18,12 @@ Setup and Login
   >>> eighth_time_string = "2012-10-07 06:00:00"
   >>> eighth_date = datetime.datetime(2012, 10, 7, 6, 0, 0, tzinfo=tzutc())
   >>> def dc(content, name='/tmp/out.html'): open(name, 'w').write(content)
-  >>> tools = tests.setUpFunctional(
+  >>> tools = testing.setUpFunctional(
   ...     **{'kotti.configurators': 'kotti_forum.kotti_configure'})
   >>> browser = tools['Browser']()
   >>> ctrl = browser.getControl
 
-  >>> browser.open(tests.BASE_URL + '/@@login')
+  >>> browser.open(testing.BASE_URL + '/@@login')
   >>> "Log in" in browser.contents
   True
   >>> ctrl("Username or email").value = "admin"
@@ -35,19 +35,19 @@ Setup and Login
 Add a forum 
 -------------------------
 
-  >>> browser.open(tests.BASE_URL + '/@@add_forum')
+  >>> browser.open(testing.BASE_URL + '/@@add_forum')
   >>> ctrl("Title").value = "New Software Collection"
   >>> ctrl("Body").value = "This is the new forum"
   >>> ctrl("save").click()
   >>> "Successfully added item" in browser.contents
   True
-  >>> browser.url == tests.BASE_URL + '/new-forum/'
+  >>> browser.url == testing.BASE_URL + '/new-forum/'
   True
 
 Add posts
 --------------------
 
-  >>> browser.open(tests.BASE_URL + '/new-forum/@@add_post')
+  >>> browser.open(testing.BASE_URL + '/new-forum/@@add_post')
   >>> ctrl("Title").value = "First post"
   >>> ctrl("Body").value = "This post concerns throwing dice..."
   >>> ctrl("Use entered date").selected = True
@@ -56,7 +56,7 @@ Add posts
   >>> "Successfully added item" in browser.contents
   True
 
-  >>> browser.open(tests.BASE_URL + '/new-forum/@@add_post')
+  >>> browser.open(testing.BASE_URL + '/new-forum/@@add_post')
   >>> ctrl("Title").value = "Second post"
   >>> ctrl("Body").value = "This post is about hurricanes..."
   >>> ctrl("Use entered date").selected = True
@@ -68,7 +68,7 @@ Add posts
 Add a post using pypi source
 ----------------------------------------
 
-  >>> browser.open(tests.BASE_URL + '/new-forum/@@add_post')
+  >>> browser.open(testing.BASE_URL + '/new-forum/@@add_post')
   >>> ctrl("Title").value = "kotti_forum"
   >>> ctrl("Body").value = "This post is about this very post..."
   >>> ctrl("Use date in PyPI data").selected = True
@@ -82,7 +82,7 @@ Add a post using pypi source
 Add a post with GitHub owner but not repo
 -----------------------------------------------------
 
-  >>> browser.open(tests.BASE_URL + '/new-forum/@@add_post')
+  >>> browser.open(testing.BASE_URL + '/new-forum/@@add_post')
   >>> ctrl("Title").value = "kotti_forum"
   >>> ctrl("Body").value = "This post is about this very post..."
   >>> ctrl("Use date in PyPI data").selected = True
@@ -98,7 +98,7 @@ Add a post with GitHub owner but not repo
 Add a post with GitHub repo but not owner
 -----------------------------------------------------
 
-  >>> browser.open(tests.BASE_URL + '/new-forum/@@add_post')
+  >>> browser.open(testing.BASE_URL + '/new-forum/@@add_post')
   >>> ctrl("Title").value = "kotti_forum"
   >>> ctrl("Body").value = "This post is about this very post..."
   >>> ctrl("Use date in PyPI data").selected = True
@@ -114,7 +114,7 @@ Add a post with GitHub repo but not owner
 Add a post with Bitbucket owner but not repo
 --------------------------------------------------------
 
-  >>> browser.open(tests.BASE_URL + '/new-forum/@@add_post')
+  >>> browser.open(testing.BASE_URL + '/new-forum/@@add_post')
   >>> ctrl("Title").value = "kotti_forum"
   >>> ctrl("Body").value = "This post is about this very post..."
   >>> ctrl("Use date in PyPI data").selected = True
@@ -130,7 +130,7 @@ Add a post with Bitbucket owner but not repo
 Add a post with Bitbucket repo but not owner
 --------------------------------------------------------
 
-  >>> browser.open(tests.BASE_URL + '/new-forum/@@add_post')
+  >>> browser.open(testing.BASE_URL + '/new-forum/@@add_post')
   >>> ctrl("Title").value = "kotti_forum"
   >>> ctrl("Body").value = "This post is about this very post..."
   >>> ctrl("Use date in PyPI data").selected = True
@@ -146,7 +146,7 @@ Add a post with Bitbucket repo but not owner
 View forum and post
 ---------------------------------------------
 
-  >>> browser.open(tests.BASE_URL + '/new-forum/')
+  >>> browser.open(testing.BASE_URL + '/new-forum/')
   >>> "First post" in browser.contents
   True
   >>> "Jul 31, 2012" in browser.contents
@@ -161,7 +161,7 @@ View forum and post
 Add a post with use_pypi_date but no pypi_url
 ---------------------------------------------------------
 
-  >>> browser.open(tests.BASE_URL + '/new-forum/@@add_post')
+  >>> browser.open(testing.BASE_URL + '/new-forum/@@add_post')
   >>> ctrl("Title").value = "Third post"
   >>> ctrl("Body").value = "This post concerns lions and tigers..."
   >>> ctrl("Use date in PyPI data").selected = True
@@ -175,7 +175,7 @@ Add a post with use_pypi_date but no pypi_url
 Add a post with desc to come from pypi, but no pypi_url
 -------------------------------------------------------------------
 
-  >>> browser.open(tests.BASE_URL + '/new-forum/@@add_post')
+  >>> browser.open(testing.BASE_URL + '/new-forum/@@add_post')
   >>> ctrl("Title").value = "Fourth post"
   >>> ctrl("Body").value = "This post concerns cavemen and alligators..."
   >>> ctrl("Use description in PyPI data").selected = True
@@ -189,7 +189,7 @@ Add a post with desc to come from pypi, but no pypi_url
 Add a post with use_github_date but no GitHub owner, repo
 ---------------------------------------------------------------------
 
-  >>> browser.open(tests.BASE_URL + '/new-forum/@@add_post')
+  >>> browser.open(testing.BASE_URL + '/new-forum/@@add_post')
   >>> ctrl("Title").value = "Fifth post"
   >>> ctrl("Body").value = "This post concerns aardvarks and armadillos..."
   >>> ctrl("Use date in GitHub data").selected = True
@@ -206,7 +206,7 @@ Add a post with use_github_date but no GitHub owner, repo
 Add a post with desc to come from GitHub, but no GitHub owner, repo
 -------------------------------------------------------------------------------
 
-  >>> browser.open(tests.BASE_URL + '/new-forum/@@add_post')
+  >>> browser.open(testing.BASE_URL + '/new-forum/@@add_post')
   >>> ctrl("Title").value = "Sixth post"
   >>> ctrl("Body").value = "This post concerns architects and lawyers..."
   >>> ctrl("Use entered date").selected = True
@@ -225,7 +225,7 @@ Add a post with desc to come from GitHub, but no GitHub owner, repo
 Add a post with use_bitbucket_date but no Bitbucket owner, repo
 ---------------------------------------------------------------------------
 
-  >>> browser.open(tests.BASE_URL + '/new-forum/@@add_post')
+  >>> browser.open(testing.BASE_URL + '/new-forum/@@add_post')
   >>> ctrl("Title").value = "Seventh post"
   >>> ctrl("Body").value = "This post concerns lizards and frogs..."
   >>> ctrl("Use date in Bitbucket data").selected = True
@@ -242,7 +242,7 @@ Add a post with use_bitbucket_date but no Bitbucket owner, repo
 Add a post with desc to come from Bitbucket, but no Bitbucket owner, repo
 -------------------------------------------------------------------------------------
 
-  >>> browser.open(tests.BASE_URL + '/new-forum/@@add_post')
+  >>> browser.open(testing.BASE_URL + '/new-forum/@@add_post')
   >>> ctrl("Title").value = "Eighth post"
   >>> ctrl("Body").value = "This post concerns dogs and cats..."
   >>> ctrl("Use entered date").selected = True
@@ -261,12 +261,12 @@ Add a post with desc to come from Bitbucket, but no Bitbucket owner, repo
 Edit forum and post and verify the changes
 --------------------------------------------------------------------
 
-  >>> browser.open(tests.BASE_URL + '/new-forum/@@edit')
+  >>> browser.open(testing.BASE_URL + '/new-forum/@@edit')
   >>> ctrl("Title").value = "This is the Software Collection"
   >>> ctrl("Body").value = "Hello, I am a forum"
   >>> ctrl("save").click()
 
-  >>> browser.open(tests.BASE_URL + '/new-forum/first-post/@@edit')
+  >>> browser.open(testing.BASE_URL + '/new-forum/first-post/@@edit')
   >>> ctrl("Title").value = "I was first, but now am an edited post"
   >>> ctrl("Description", index=0).value = "I am an edited post"
   >>> ctrl("Tags").value = "dice editing"
@@ -283,20 +283,20 @@ Edit forum and post and verify the changes
 Edit a post to change the pypi_url, forcing date to blank
 ---------------------------------------------------------------------
 
-  >>> browser.open(tests.BASE_URL + '/new-forum/first-post/@@edit')
+  >>> browser.open(testing.BASE_URL + '/new-forum/first-post/@@edit')
   >>> ctrl("Use date in PyPI data").selected = True
   >>> ctrl("Date", index=1).value = ""
   >>> ctrl("PyPI URL").value = "http://pypi.python.org/pypi/Kotti/json"
   >>> ctrl("save").click()
 
-  >>> browser.open(tests.BASE_URL + '/new-forum/')
+  >>> browser.open(testing.BASE_URL + '/new-forum/')
   >>> "Kotti" in browser.contents
   True
 
 Edit a post with date *and* pypi_url changed
 --------------------------------------------------------
 
-  >>> browser.open(tests.BASE_URL + '/new-forum/first-post/@@edit')
+  >>> browser.open(testing.BASE_URL + '/new-forum/first-post/@@edit')
   >>> ctrl("Title").value = "Edited post"
   >>> ctrl("Use date in PyPI data").selected = True
   >>> ctrl("PyPI URL", index=0).value = ""
@@ -309,7 +309,7 @@ Edit a post with date *and* pypi_url changed
 Edit a post with GitHub owner and repo changed
 ----------------------------------------------------------
 
-  >>> browser.open(tests.BASE_URL + '/new-forum/kotti_forum/@@edit')
+  >>> browser.open(testing.BASE_URL + '/new-forum/kotti_forum/@@edit')
   >>> ctrl("Title").value = "kotti_media"
   >>> ctrl("GitHub Owner").value = "geojeff"
   >>> ctrl("GitHub Repo").value = "kotti_media"
@@ -320,7 +320,7 @@ Edit a post with GitHub owner and repo changed
 Edit a post with Bitbucket owner and repo changed
 -------------------------------------------------------------
 
-  >>> browser.open(tests.BASE_URL + '/new-forum/kotti_forum/@@edit')
+  >>> browser.open(testing.BASE_URL + '/new-forum/kotti_forum/@@edit')
   >>> ctrl("Title").value = "sphinx"
   >>> ctrl("Bitbucket Owner").value = "birkenfeld"
   >>> ctrl("Bitbucket Repo").value = "sphinx"
@@ -331,20 +331,20 @@ Edit a post with Bitbucket owner and repo changed
 Add a forum with sorting changed
 ----------------------------------------------
 
-  >>> browser.open(tests.BASE_URL + '/@@add_forum')
+  >>> browser.open(testing.BASE_URL + '/@@add_forum')
   >>> ctrl("Title").value = "Ordered GitHub Software Collection"
   >>> ctrl("Body").value = "This forum is GitHub only, ascending sorted"
   >>> ctrl("Ascending").selected = True
   >>> ctrl("save").click()
   >>> "Successfully added item" in browser.contents
   True
-  >>> browser.url == tests.BASE_URL + '/ordered-github-forum/'
+  >>> browser.url == testing.BASE_URL + '/ordered-github-forum/'
   True
 
 Add GitHub posts and one dated NOW; Test for ascending order
 ------------------------------------------------------------------------
 
-  >>> browser.open(tests.BASE_URL + '/ordered-github-forum/@@add_post')
+  >>> browser.open(testing.BASE_URL + '/ordered-github-forum/@@add_post')
   >>> ctrl("Title").value = "GitHub kotti_forum"
   >>> ctrl("Body").value = "This post is about this very post on GitHub..."
   >>> ctrl("Use date in GitHub data").selected = True
@@ -354,7 +354,7 @@ Add GitHub posts and one dated NOW; Test for ascending order
   >>> "Successfully added item" in browser.contents
   True
 
-  >>> browser.open(tests.BASE_URL + '/ordered-github-forum/@@add_post')
+  >>> browser.open(testing.BASE_URL + '/ordered-github-forum/@@add_post')
   >>> ctrl("Title").value = "GitHub Kotti geojeff fork"
   >>> ctrl("Body").value = "This post is about Kotti forked on geojeff GitHub..."
   >>> ctrl("Use date in GitHub data").selected = True
@@ -364,7 +364,7 @@ Add GitHub posts and one dated NOW; Test for ascending order
   >>> "Successfully added item" in browser.contents
   True
 
-  >>> browser.open(tests.BASE_URL + '/ordered-github-forum/@@add_post')
+  >>> browser.open(testing.BASE_URL + '/ordered-github-forum/@@add_post')
   >>> ctrl("Title").value = "kotti_forum dated NOW"
   >>> ctrl("Body").value = "This post is kotti_forum with a date of NOW..."
   >>> ctrl("Use current date and time").selected = True
@@ -374,7 +374,7 @@ Add GitHub posts and one dated NOW; Test for ascending order
   >>> "Successfully added item" in browser.contents
   True
 
-  >>> browser.open(tests.BASE_URL + '/ordered-github-forum/')
+  >>> browser.open(testing.BASE_URL + '/ordered-github-forum/')
   >>> "GitHub Kotti geojeff fork" in browser.contents
   True
   >>> "GitHub kotti_forum" in browser.contents
@@ -388,7 +388,7 @@ Add GitHub posts and one dated NOW; Test for ascending order
 Edit the ordered forum to reverse sorting
 -------------------------------------------------------
 
-  >>> browser.open(tests.BASE_URL + '/ordered-github-forum/@@edit')
+  >>> browser.open(testing.BASE_URL + '/ordered-github-forum/@@edit')
   >>> ctrl("Title").value = "I was descending, but now am ascending"
   >>> ctrl("Description").value = "I was descending, but now am ascending"
   >>> ctrl("Tags").value = "sorting order lists"

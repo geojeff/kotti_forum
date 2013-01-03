@@ -23,7 +23,7 @@ from kotti_forum.resources import Forum
 from kotti_forum.resources import Topic
 from kotti_forum.resources import Post
 from kotti_forum.resources import Vote
-from kotti_forum.static import kotti_forum_js
+from kotti_forum.fanstatic import kotti_forum_js
 from kotti_forum import _
 
 from kotti.security import has_permission
@@ -427,7 +427,7 @@ class ForumView(BaseView):
         modification_dates_and_items = []
         for item in items:
             if item.children:
-                sorted_posts = sorted(item.children, 
+                sorted_posts = sorted(item.children,
                                       key=lambda x: x.modification_date,
                                       reverse=True)
                 modification_dates_and_items.append(
